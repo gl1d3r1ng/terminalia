@@ -1,0 +1,19 @@
+{
+	"initialLevel": "l1",
+	"flags": {
+		"darkness": -1,
+		"movecamera": true
+	},
+	"scripts": {},
+	"levels": {
+		"l1": {
+			"objects": {
+				"player": { "bp": "player", "x": 0, "y": 0 },
+				"wall2": { "bp": "wall", "x": 3, "y": 2 },
+				"wall1": { "bp": "wall", "x": -4, "y": 0 },
+				"fwall": { "bp": "fakewall", "x": 1, "y": -2 }
+			},
+			"zones": {}
+		}
+	}
+}

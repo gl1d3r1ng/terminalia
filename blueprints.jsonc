@@ -1,0 +1,26 @@
+{
+	"wall": {
+		"name": "wall",
+		"icon": "#",
+		"ent": "None",
+		"coll": 1,
+		"priority": 1,
+		"ttl": -1
+	},
+	"player": {
+		"name": "player",
+		"icon": "@",
+		"ent": "human",
+		"coll": 1,
+		"priority": 999,
+		"ttl": -1
+	},
+	"fakewall": {
+		"name": "wall",
+		"icon": "#",
+		"ent": "None",
+		"coll": 0,
+		"priority": 1,
+		"ttl": -1
+	}
+}
