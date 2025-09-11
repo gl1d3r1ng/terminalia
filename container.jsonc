@@ -1,19 +1,30 @@
 {
 	"initialLevel": "l1",
-	"flags": {
-		"darkness": -1,
-		"movecamera": true
-	},
-	"scripts": {},
+	"gflags": {},
 	"levels": {
 		"l1": {
+			"flags": {
+				"darkness": {
+					"shape": "square",
+					"xdist": 4,
+					"ydist": 4,
+					"radius": 6
+				},
+				"movecamera": true,
+				"viewsize": {
+					"x": 10,
+					"y": 7
+				}
+			},
 			"objects": {
 				"player": { "bp": "player", "x": 0, "y": 0 },
 				"wall2": { "bp": "wall", "x": 3, "y": 2 },
 				"wall1": { "bp": "wall", "x": -4, "y": 0 },
-				"fwall": { "bp": "fakewall", "x": 1, "y": -2 }
+				"fwall": { "bp": "wall", "coll": 0, "x": 1, "y": -2 },
+				"inviswall": { "bp": "wall", "icon": ".", "x": 0, "y": -2 }
 			},
-			"zones": {}
+			"zones": {},
+			"scripts": {}
 		}
 	}
 }
