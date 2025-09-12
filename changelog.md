@@ -1,3 +1,8 @@
+### v0.0.1.2
+- changed static screen updates to fps-based
+- basic logging
+- some testing stuff in ./test/
+
 ### v0.0.1.1 
 - basic darkness
 - gflags added

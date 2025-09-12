@@ -6,8 +6,8 @@
 			"flags": {
 				"darkness": {
 					"shape": "square",
-					"xdist": 4,
-					"ydist": 4,
+					"xdist": 6,
+					"ydist": 6,
 					"radius": 6
 				},
 				"movecamera": true,
@@ -23,7 +23,7 @@
 				"fwall": { "bp": "wall", "coll": 0, "x": 1, "y": -2 },
 				"inviswall": { "bp": "wall", "icon": ".", "x": 0, "y": -2 }
 			},
-			"zones": {},
+			"checkers": {},
 			"scripts": {}
 		}
 	}

@@ -11,7 +11,7 @@ import level
 import blessed # install via pip or repos
 
 ### Lib vars
-version = "v0.0.1.1"
+version = "v0.0.1.2"
 
 gflags = {}
 flags = {}
@@ -20,13 +20,18 @@ blueprints = {} ## for fast object making
 container = {} ## vault with levels,...
 currentlevel = None
 actions = {"player": 0}
+checkers = {}
+scripts = {}
 
+fps = 60
 camera = {"x": 0, "y": 0}
 xviewsize = 0
 yviewsize = 0
 log = []
+log_view_limit = 10
 term = blessed.Terminal()
 light = {}
+gf_bouncers = {}
 
 ## cache
 objects = {} # container["levels"][currentlevel]["objects"]
@@ -35,7 +40,7 @@ player_coords = {"x": 0, "y": 0}
 ### Funcs
 ## Initializing, loading, ...
 def init(containerfile="container.jsonc", blueprintsfile="blueprints.jsonc"):
-    global container, blueprints, gflags, objects, xviewsize, yviewsize
+    global container, blueprints, gflags
     blueprints = level.loadfile(blueprintsfile)
     container = level.loadfile(containerfile)
     gflags = container["gflags"]
@@ -47,18 +52,20 @@ def init(containerfile="container.jsonc", blueprintsfile="blueprints.jsonc"):
             objs[object].pop("bp")
             #print(objs[object])
     # del objs
-
     load_level(container["initialLevel"])
-    objects = container["levels"][currentlevel]["objects"]
-    update_player_coords()
-    xviewsize = flags["viewsize"]["x"]
-    yviewsize = flags["viewsize"]["y"]
 
 def load_level(id: str):
-    global currentlevel, container, flags
+    global currentlevel, container, flags, objects, checkers, scripts, xviewsize, yviewsize
     if id in container["levels"]:
         currentlevel = id
         flags = container["levels"][currentlevel]["flags"]
+        objects = container["levels"][currentlevel]["objects"]
+        checkers = container["levels"][currentlevel]["checkers"]
+        scripts = container["levels"][currentlevel]["scripts"]
+        update_player_coords()
+        xviewsize = flags["viewsize"]["x"]
+        yviewsize = flags["viewsize"]["y"]
+        
 
 def set_flag(flag: str, value: str, level = "<NONE>"):
     if level == "<NONE>":
@@ -77,19 +84,47 @@ def update_player_coords() -> None:
 ## Scripting
 def script_exec(cmd: list) -> None:
     cmdl = len(cmd)
+    vars = {}
     if cmdl != 0:
         index = 0
+        for com in cmd:
+            if len(com[0]) > 1 and com[1][0] == ":":
+                print(com)
+
         while index != cmdl:
             com = cmd[index]
             match com[0]:
+                case "var":
+                    ...
+                case "goto":
+                    ...
                 case "set_flag":
                     set_flag(com[1], com[2], "<NONE>" if len(com) == 2 else com[3])
+                case "set_gflag":
+                    set_gflag(com[1], com[2])
+                case "pass":
+                    ...
                 case "exit":
                     break
             index += 1
 
 ## 
-def check_zones() -> None:
+def check_checkers() -> None:
+    ...
+
+def add_object():
+    ...
+
+def rem_object():
+    ...
+
+def mod_object():
+    ...
+
+def add_item():
+    ...
+
+def rem_item():
     ...
 
 def shift_object(id: str, x, y, ignor_coll = False):
@@ -127,12 +162,19 @@ def updatesc():
                 if (x, y) in objbuf:
                     icon = objects[objbuf[(x,y)]["id"]]["icon"]
                 else:
-                    # buf += "."
-                    icon = "."
+                    icon = "." ## emptyness
             buf += icon
         buf += "\n"
 
     print(term.home + term.clear + "".join(buf))
+
+    ## Logs
+    loglen = len(log)
+    print(term.move_xy(0, term.height - (loglen if loglen <= log_view_limit else log_view_limit) - 2))
+    for msg in log[(loglen - log_view_limit) if loglen > log_view_limit else  None:]:
+        print(msg)
+
+    # time.sleep(1/fps)
 
 def indarkness(x, y):
     for source in lightbuf:
@@ -153,10 +195,13 @@ def indarkness(x, y):
                         return 1
     return 1
 
-def useract():
+def log_update(msg: str) -> None:
+    log.append(msg)
+
+def kbread():
     shift = [0,0]
     with term.cbreak(), term.hidden_cursor():
-        inp = term.inkey()
+        inp = term.inkey(timeout=1/fps)
         if inp.is_sequence: 
             inp = repr(inp)
 
@@ -170,13 +215,15 @@ def useract():
         case "n": shift = [1, -1]
         case "y": shift = [-1, 1]
         case "u": shift = [1, 1]
+        case "m": log_update("M was pressed!")
         case "q": exit()
         case _: ...
 
-    if shift != [0, 0]:
-        shift_object("player", shift[0], shift[1])
-        update_player_coords()
-        actions["player"] = 100
+    if actions["player"] <= 0:
+        if shift != [0, 0]:
+            shift_object("player", shift[0], shift[1])
+            update_player_coords()
+            actions["player"] = 1
 
     if flags["movecamera"]:
         camera["x"] = player_coords["x"]
@@ -186,9 +233,10 @@ def useract():
 ### Main code ###
 init()
 #print(container, currentlevel)
-while 1:
-    updatesc()
-    if actions["player"] <= 0:
-        useract()
-    for action in actions:
-        actions[action] -= 1
+with term.fullscreen():
+    while 1:
+        updatesc()
+        kbread()
+        if actions["player"] > 0:
+            for action in actions:
+                actions[action] -= 1

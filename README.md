@@ -2,17 +2,29 @@
 Terminalia is a funmade [TUI](https://en.wikipedia.org/wiki/Text-based_user_interface) rpg game engine
 
 Plans:
+done:
+- [x] bluerints
+- [x] flags and gflags
+- [x] fps
+
+0:
+- log
+- basic scripts
+- checkers
+- basic debug
+
 1:
 - [~] object system
 - [ ] ui core (blessed lib)
 - [-] ?ui core (cursed)
-- [x] bluerints
-- [x] flags and gflags
-- [ ] zones
+- [ ] ~~zones~~ checkers
 - [ ] cache
-- [ ] scripts
+- [ ] bouncers
+- [ ] script linear execution
+- [~] log
 
 2:
+- [ ] script conditions, goto
 - [ ] fantom objects (technicaly, neither object or items, IOW, overlay: snow, darkness, rain, overlay text)
 - [ ] strings
 - [ ] ingame wiki
