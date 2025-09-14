@@ -23,8 +23,20 @@
 				"fwall": { "bp": "wall", "coll": 0, "x": 1, "y": -2 },
 				"inviswall": { "bp": "wall", "icon": ".", "x": 0, "y": -2 }
 			},
-			"checkers": {},
-			"scripts": {}
+			"checkers": {
+				"check0": {
+					"disable": true,
+					"conditions": [["flag", "flag0", "yess"]],
+					"script": "script0"
+				}
+			},
+			"scripts": {
+				"script0": [["log_update", "Script executed!"]]
+			},
+			"bouncers": {
+				"violet0": {},
+				"white0": {}
+			}
 		}
 	}
 }

@@ -6,6 +6,10 @@ done:
 - [x] bluerints
 - [x] flags and gflags
 - [x] fps
+- [x] colors
+- [x] basic checker
+- [x] basic script
+- [x] log
 
 0:
 - log
@@ -19,14 +23,14 @@ done:
 - [-] ?ui core (cursed)
 - [ ] ~~zones~~ checkers
 - [ ] cache
-- [ ] bouncers
+- [ ] color switchers
 - [ ] script linear execution
 - [~] log
+- [ ] strings
 
 2:
 - [ ] script conditions, goto
 - [ ] fantom objects (technicaly, neither object or items, IOW, overlay: snow, darkness, rain, overlay text)
-- [ ] strings
 - [ ] ingame wiki
 - [ ] light
 - [ ] map constructor

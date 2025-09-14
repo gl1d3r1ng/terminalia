@@ -1,3 +1,8 @@
+### v0.0.1.21
+- basic ckecker
+- basic linear scripting
+- color_compiler()
+
 ### v0.0.1.2
 - changed static screen updates to fps-based
 - basic logging

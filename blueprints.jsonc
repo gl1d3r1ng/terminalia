@@ -8,7 +8,7 @@
 	},
 	"player": {
 		"name": "player",
-		"icon": "@",
+		"icon": "[yellow]@",
 		"ent": "human",
 		"coll": 1,
 		"priority": 999

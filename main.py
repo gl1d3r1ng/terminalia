@@ -5,6 +5,7 @@
 ## by gl1d3r1ng
 ###
 
+import re
 import mathfuns
 #import curser
 import level
@@ -31,7 +32,7 @@ log = []
 log_view_limit = 10
 term = blessed.Terminal()
 light = {}
-gf_bouncers = {}
+color_switchers = {}
 
 ## cache
 objects = {} # container["levels"][currentlevel]["objects"]
@@ -51,6 +52,11 @@ def init(containerfile="container.jsonc", blueprintsfile="blueprints.jsonc"):
             objs[object] = blueprints[objs[object]["bp"]] | objs[object] ## unite object with its blueprint
             objs[object].pop("bp")
             #print(objs[object])
+
+        checkers = container["levels"][lev]["checkers"]
+        for checker in checkers:
+            if not "on" in checkers[checker]:
+                checkers[checker]["on"] = True
     # del objs
     load_level(container["initialLevel"])
 
@@ -82,36 +88,74 @@ def update_player_coords() -> None:
     player_coords["y"] = objects["player"]["y"]
 
 ## Scripting
-def script_exec(cmd: list) -> None:
+def script_exec(cmd: list, id = None) -> None:
+    if id != None:
+        cmd = scripts[id]
+
+    commands = ["set_gflag", "log_update"]
     cmdl = len(cmd)
     vars = {}
+    points = {} ## TBC...
     if cmdl != 0:
         index = 0
         for com in cmd:
-            if len(com[0]) > 1 and com[1][0] == ":":
-                print(com)
-
-        while index != cmdl:
+            if len(com[0]) > 1 and com[0][0] == ":":
+            #print(com)
+                ...
+        while index < cmdl:
             com = cmd[index]
-            match com[0]:
-                case "var":
-                    ...
-                case "goto":
-                    ...
-                case "set_flag":
-                    set_flag(com[1], com[2], "<NONE>" if len(com) == 2 else com[3])
-                case "set_gflag":
-                    set_gflag(com[1], com[2])
-                case "pass":
-                    ...
-                case "exit":
-                    break
+            if com[0] in commands:
+                globals()[com[0]](*com[1:])
+            else:
+                match com[0]:
+                    case "var":
+                        vars[com[1]] = com[2]
+                    case "goto":
+                        index = com[1] - 1
+                    case "if":
+                        ...
+                    case "ifgo":
+                        ...
+                    case "set_flag":
+                        set_flag(com[1], com[2], "<NONE>" if len(com) == 2 else com[3])
+                    # case "set_gflag":
+                    #     set_gflag(com[1], com[2])
+                    # case "log_update":
+                    #     log_update(com[1])
+                    case "pass":
+                        pass
+                    case "exit":
+                        break
             index += 1
 
-## 
-def check_checkers() -> None:
+## Checkes
+def add_checker():
     ...
 
+def switch_checker():
+    ...
+
+def check_checkers() -> None:
+    for checker in checkers:
+        if checkers[checker]["on"]:
+            #debug_file_update(checker)
+            Checker = checkers[checker]
+            ready_conds = 0
+            for condition in Checker["conditions"]:
+                match condition[0]:
+                    case "flag":
+                        if condition[1] in flags:
+                            if flags[condition[1]] == condition[2]:
+                                ready_conds += 1
+                    case "in_square":
+                        ...
+            if ready_conds == len(Checker["conditions"]):
+                script_exec([], Checker["script"])
+                if Checker["disable"]:
+                    Checker["on"] = False
+                #log_update("Exected "+checker)
+
+## Objects
 def add_object():
     ...
 
@@ -121,6 +165,7 @@ def rem_object():
 def mod_object():
     ...
 
+## Items
 def add_item():
     ...
 
@@ -160,7 +205,7 @@ def updatesc():
                 icon = " "
             else:
                 if (x, y) in objbuf:
-                    icon = objects[objbuf[(x,y)]["id"]]["icon"]
+                    icon = color_compile(objects[objbuf[(x,y)]["id"]]["icon"])
                 else:
                     icon = "." ## emptyness
             buf += icon
@@ -173,6 +218,8 @@ def updatesc():
     print(term.move_xy(0, term.height - (loglen if loglen <= log_view_limit else log_view_limit) - 2))
     for msg in log[(loglen - log_view_limit) if loglen > log_view_limit else  None:]:
         print(msg)
+
+    # print(term.move_xy(xviewsize * 2 + 3, 0), flags)
 
     # time.sleep(1/fps)
 
@@ -195,6 +242,20 @@ def indarkness(x, y):
                         return 1
     return 1
 
+def color_compile(msg: str, normal_end = True) -> str:
+    ## Changes [color] to ansi color; changes \[ to [, \] to ]
+    matches = re.findall(r"(?<!\\)\[.*?]", msg)
+    for Match in matches:
+        if Match == "[0]":
+            replacing = term.normal
+        else:
+            replacing = f"{getattr(term, Match[1:-1])}"
+        msg = msg.replace(Match, replacing)
+    msg = msg.replace(r"\[", "[").replace(r"\]", "]")
+    if normal_end:
+        msg += term.normal
+    return msg
+
 def log_update(msg: str) -> None:
     log.append(msg)
 
@@ -215,7 +276,8 @@ def kbread():
         case "n": shift = [1, -1]
         case "y": shift = [-1, 1]
         case "u": shift = [1, 1]
-        case "m": log_update("M was pressed!")
+        case "m": log_update(color_compile("M was [red]pressed[0]!"))
+        case "s": set_flag("flag0", "yess")
         case "q": exit()
         case _: ...
 
@@ -229,6 +291,9 @@ def kbread():
         camera["x"] = player_coords["x"]
         camera["y"] = player_coords["y"]
         
+def debug_file_update(msg):
+    with open("debug.log", "a") as dfile:
+        dfile.write("".join(msg) + "\n")
 
 ### Main code ###
 init()
@@ -237,6 +302,7 @@ with term.fullscreen():
     while 1:
         updatesc()
         kbread()
+        check_checkers()
         if actions["player"] > 0:
             for action in actions:
                 actions[action] -= 1
