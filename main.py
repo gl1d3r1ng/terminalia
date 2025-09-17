@@ -118,10 +118,6 @@ def script_exec(cmd: list, id = None) -> None:
                         ...
                     case "set_flag":
                         set_flag(com[1], com[2], "<NONE>" if len(com) == 2 else com[3])
-                    # case "set_gflag":
-                    #     set_gflag(com[1], com[2])
-                    # case "log_update":
-                    #     log_update(com[1])
                     case "pass":
                         pass
                     case "exit":
@@ -132,8 +128,12 @@ def script_exec(cmd: list, id = None) -> None:
 def add_checker():
     ...
 
-def switch_checker():
-    ...
+def switch_checker(checker: str):
+    if checker in checkers:
+        Checker = checkers[checker]
+        match Checker["on"]:
+            case True: Checker["on"] = False
+            case False: Checker["on"] = True
 
 def check_checkers() -> None:
     for checker in checkers:
@@ -149,10 +149,11 @@ def check_checkers() -> None:
                                 ready_conds += 1
                     case "in_square":
                         ...
+                        
             if ready_conds == len(Checker["conditions"]):
                 script_exec([], Checker["script"])
                 if Checker["disable"]:
-                    Checker["on"] = False
+                    switch_checker(checker)
                 #log_update("Exected "+checker)
 
 ## Objects

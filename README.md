@@ -7,14 +7,13 @@ done:
 - [x] flags and gflags
 - [x] fps
 - [x] colors
-- [x] basic checker
-- [x] basic script
+- [x] basic checker (will be removed)
+- [x] basic script (will be rewriten)
 - [x] log
 
 0:
-- log
-- basic scripts
-- checkers
+- rewrite script system
+- replace checkers to scripts
 - basic debug
 
 1:
@@ -24,15 +23,16 @@ done:
 - [ ] ~~zones~~ checkers
 - [ ] cache
 - [ ] color switchers
-- [ ] script linear execution
+- [ ] script
 - [~] log
 - [ ] strings
 
 2:
-- [ ] script conditions, goto
+- [ ] ~~script conditions, goto~~
 - [ ] fantom objects (technicaly, neither object or items, IOW, overlay: snow, darkness, rain, overlay text)
 - [ ] ingame wiki
 - [ ] light
+- [ ] sight field
 - [ ] map constructor
 
 3:
