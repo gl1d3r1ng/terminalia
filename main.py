@@ -12,18 +12,22 @@ import level
 import blessed # install via pip or repos
 
 ### Lib vars
-version = "v0.0.1.2"
+version = "v0.0.1.22"
 
+## flags
 gflags = {}
 flags = {}
 
+##
 blueprints = {} ## for fast object making
 container = {} ## vault with levels,...
 currentlevel = None
 actions = {"player": 0}
-checkers = {}
 scripts = {}
+items = {}
+objects = {}
 
+## grafic
 fps = 60
 camera = {"x": 0, "y": 0}
 xviewsize = 0
@@ -31,42 +35,42 @@ yviewsize = 0
 log = []
 log_view_limit = 10
 term = blessed.Terminal()
-light = {}
+lights = {}
 color_switchers = {}
 
 ## cache
-objects = {} # container["levels"][currentlevel]["objects"]
 player_coords = {"x": 0, "y": 0}
 
 ### Funcs
 ## Initializing, loading, ...
 def init(containerfile="container.jsonc", blueprintsfile="blueprints.jsonc"):
-    global container, blueprints, gflags
+    global container, blueprints, gflags, object_bps, items_bps
     blueprints = level.loadfile(blueprintsfile)
+    object_bps = blueprints["objects"]
+    items_bps = blueprints["items"]
     container = level.loadfile(containerfile)
     gflags = container["gflags"]
 
     for lev in container["levels"]:
         objs = container["levels"][lev]["objects"]
         for object in objs:
-            objs[object] = blueprints[objs[object]["bp"]] | objs[object] ## unite object with its blueprint
+            objs[object] = object_bps[objs[object]["bp"]] | objs[object] ## unite object with its blueprint
             objs[object].pop("bp")
-            #print(objs[object])
 
-        checkers = container["levels"][lev]["checkers"]
-        for checker in checkers:
-            if not "on" in checkers[checker]:
-                checkers[checker]["on"] = True
-    # del objs
+    for lev in container["levels"]:
+        itms = container["levels"][lev]["items"]
+        for item in itms:
+            itms[item] = items_bps[itms[item]["bp"]] | itms[item] ## unite item with its blueprint
+            itms[item].pop("bp")
+            #print(objs[item])
     load_level(container["initialLevel"])
 
 def load_level(id: str):
-    global currentlevel, container, flags, objects, checkers, scripts, xviewsize, yviewsize
+    global currentlevel, container, flags, objects, scripts, xviewsize, yviewsize
     if id in container["levels"]:
         currentlevel = id
         flags = container["levels"][currentlevel]["flags"]
         objects = container["levels"][currentlevel]["objects"]
-        checkers = container["levels"][currentlevel]["checkers"]
         scripts = container["levels"][currentlevel]["scripts"]
         update_player_coords()
         xviewsize = flags["viewsize"]["x"]
@@ -79,92 +83,45 @@ def set_flag(flag: str, value: str, level = "<NONE>"):
     elif level in container["levels"]:
         container["levels"][level][flags] = value
 
+def read_flag(flag, level = "<NONE>"):
+    if level == "<NONE>":
+        return flags[flag]
+    elif level in container["levels"]:
+        return container["levels"][level]["flags"][flag]
+
 def set_gflag(flag: str, value: str):
     gflags[flag] = value
 
-## Cache
-def update_player_coords() -> None:
-    player_coords["x"] = objects["player"]["x"]
-    player_coords["y"] = objects["player"]["y"]
-
-## Scripting
-def script_exec(cmd: list, id = None) -> None:
-    if id != None:
-        cmd = scripts[id]
-
-    commands = ["set_gflag", "log_update"]
-    cmdl = len(cmd)
-    vars = {}
-    points = {} ## TBC...
-    if cmdl != 0:
-        index = 0
-        for com in cmd:
-            if len(com[0]) > 1 and com[0][0] == ":":
-            #print(com)
-                ...
-        while index < cmdl:
-            com = cmd[index]
-            if com[0] in commands:
-                globals()[com[0]](*com[1:])
-            else:
-                match com[0]:
-                    case "var":
-                        vars[com[1]] = com[2]
-                    case "goto":
-                        index = com[1] - 1
-                    case "if":
-                        ...
-                    case "ifgo":
-                        ...
-                    case "set_flag":
-                        set_flag(com[1], com[2], "<NONE>" if len(com) == 2 else com[3])
-                    case "pass":
-                        pass
-                    case "exit":
-                        break
-            index += 1
-
-## Checkes
-def add_checker():
-    ...
-
-def switch_checker(checker: str):
-    if checker in checkers:
-        Checker = checkers[checker]
-        match Checker["on"]:
-            case True: Checker["on"] = False
-            case False: Checker["on"] = True
-
-def check_checkers() -> None:
-    for checker in checkers:
-        if checkers[checker]["on"]:
-            #debug_file_update(checker)
-            Checker = checkers[checker]
-            ready_conds = 0
-            for condition in Checker["conditions"]:
-                match condition[0]:
-                    case "flag":
-                        if condition[1] in flags:
-                            if flags[condition[1]] == condition[2]:
-                                ready_conds += 1
-                    case "in_square":
-                        ...
-                        
-            if ready_conds == len(Checker["conditions"]):
-                script_exec([], Checker["script"])
-                if Checker["disable"]:
-                    switch_checker(checker)
-                #log_update("Exected "+checker)
+def read_gflag(flag: str):
+    return gflags[flag]
 
 ## Objects
-def add_object():
-    ...
+def add_object(id: str, bp, x: int = 0, y: int = 0, params: dict = {}) -> None:
+    if id not in objects:
+        objects[id] = {}
+        if bp != None:
+            objects[id] = objects[id] | blueprints[bp]
+        objects["x"] = x
+        objects["y"] = y
+        for k, v in params.items():
+            objects[k] = v
 
-def rem_object():
-    ...
+def rem_object(id: str) -> None:
+    if id in objects:
+        del objects[id]
 
 def mod_object():
     ...
+
+def object_prop(id: str, prop: str):
+    if object_exist(id):
+        if prop in objects[id]:
+            return objects[id][prop]
+
+def object_exist(id: str) -> bool:
+    if id in objects:
+        return True
+    return False
 
 ## Items
 def add_item():
@@ -172,6 +129,14 @@ def add_item():
 
 def rem_item():
     ...
+
+def use_item():
+    ...
+
+## Cache
+def update_player_coords() -> None:
+    player_coords["x"] = objects["player"]["x"]
+    player_coords["y"] = objects["player"]["y"]
 
 def shift_object(id: str, x, y, ignor_coll = False):
     object = objects[id]
@@ -185,12 +150,19 @@ def shift_object(id: str, x, y, ignor_coll = False):
         object["y"] += y
 
 ## UI
+def sprint(text, end:str  = ""):
+    print(text, end=end)
+
+buf = {}
+def updatemap():
+    ...
+
 def updatesc():
     ## create buffer
     global lightbuf
     objbuf = {}
     lightbuf = [{"shape": flags["darkness"]["shape"], "x": camera["x"], "y": camera["y"], "radius": flags["darkness"]["radius"], "tags": ["camera"]}]
-    buf = "" #[""]*(yviewsize * 2 + 1)
+    buf = ""
 
     ## add objects to buffer
     for obj in objects:
@@ -212,13 +184,13 @@ def updatesc():
             buf += icon
         buf += "\n"
 
-    print(term.home + term.clear + "".join(buf))
+    sprint(term.home + term.clear + "".join(buf) + "\n")
 
     ## Logs
     loglen = len(log)
-    print(term.move_xy(0, term.height - (loglen if loglen <= log_view_limit else log_view_limit) - 2))
+    sprint(term.move_xy(0, term.height - (loglen if loglen <= log_view_limit else log_view_limit) - 1))
     for msg in log[(loglen - log_view_limit) if loglen > log_view_limit else  None:]:
-        print(msg)
+        sprint(msg+ "\n")
 
     # print(term.move_xy(xviewsize * 2 + 3, 0), flags)
 
@@ -278,7 +250,7 @@ def kbread():
         case "y": shift = [-1, 1]
         case "u": shift = [1, 1]
         case "m": log_update(color_compile("M was [red]pressed[0]!"))
-        case "s": set_flag("flag0", "yess")
+        case "s": script_exec("script0")
         case "q": exit()
         case _: ...
 
@@ -296,14 +268,29 @@ def debug_file_update(msg):
     with open("debug.log", "a") as dfile:
         dfile.write("".join(msg) + "\n")
 
+## scripts
+sglobals = {"__builtins__":{
+    "print": print,
+    "log_update": log_update,
+    "add_object": add_object,
+    "object_exist": object_exist,
+    "object_prop": object_prop,
+    "rem_object": rem_object
+}}
+
+def script_exec(id:str, code: str = "") -> None:
+    if id != None:
+        code = scripts[id]["code"]
+    exec(code, sglobals)
+
+def script_autorun():
+    ...
 ### Main code ###
 init()
-#print(container, currentlevel)
 with term.fullscreen():
     while 1:
         updatesc()
         kbread()
-        check_checkers()
         if actions["player"] > 0:
             for action in actions:
                 actions[action] -= 1

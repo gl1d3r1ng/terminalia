@@ -1,16 +1,29 @@
 {
-	"wall": {
-		"name": "wall",
-		"icon": "#",
-		"ent": "None",
-		"coll": 1,
-		"priority": 1
+	"objects": {
+		"wall": {
+			"name": "wall",
+			"icon": "#",
+			"ent": "None",
+			"coll": 1,
+			"priority": 1,
+			"health": -1,
+			"inv": {}
+		},
+		"player": {
+			"name": "player",
+			"icon": "[yellow]@",
+			"ent": "human",
+			"coll": 1,
+			"priority": 999,
+			"health": 10,
+			"inv": {}
+		}
 	},
-	"player": {
-		"name": "player",
-		"icon": "[yellow]@",
-		"ent": "human",
-		"coll": 1,
-		"priority": 999
+	"items": {
+		"debugy": {
+			"name": "debugy item",
+			"icon": "&",
+			"script": "log_update('debugy used')"
+		}
 	}
 }

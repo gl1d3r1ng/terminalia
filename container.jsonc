@@ -5,7 +5,7 @@
 		"l1": {
 			"flags": {
 				"darkness": {
-					"shape": "square",
+					"shape": "circle",
 					"xdist": 6,
 					"ydist": 6,
 					"radius": 6
@@ -18,20 +18,19 @@
 			},
 			"objects": {
 				"player": { "bp": "player", "x": 0, "y": 0 },
-				"wall2": { "bp": "wall", "x": 3, "y": 2 },
-				"wall1": { "bp": "wall", "x": -4, "y": 0 },
+				"wall2": { "bp": "wall", "x": 2, "y": 2 },
+				"wall1": { "bp": "wall", "x": -2, "y": 0 },
 				"fwall": { "bp": "wall", "coll": 0, "x": 1, "y": -2 },
 				"inviswall": { "bp": "wall", "icon": ".", "x": 0, "y": -2 }
 			},
-			"checkers": {
-				"check0": {
-					"disable": true,
-					"conditions": [["flag", "flag0", "yess"]],
-					"script": "script0"
-				}
+			"items": {
+				"debugy": { "bp": "debugy", "x": -1, "y": 2, "owned": null }
 			},
 			"scripts": {
-				"script0": [["log_update", "Script executed!"]]
+				"script0": {
+					"code": "log_update('text from script')",
+					"autorun": true
+				}
 			},
 			"bouncers": {
 				"violet0": {},
