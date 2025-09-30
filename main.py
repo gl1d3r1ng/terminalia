@@ -41,6 +41,8 @@ color_switchers = {}
 ## cache
 player_coords = {"x": 0, "y": 0}
 
+pads = {"map": {"on": True, "border": False, "x": 0, "y": 0, "width": xviewsize*2+2, "height": yviewsize*2+2, "msg": ""}}
+pads_cache = {}
 ### Funcs
 ## Initializing, loading, ...
 def init(containerfile="container.jsonc", blueprintsfile="blueprints.jsonc"):
@@ -285,6 +287,11 @@ def script_exec(id:str, code: str = "") -> None:
 
 def script_autorun():
     ...
+
+def actions_update():
+    for action in actions:
+        actions[action] -= 1
+
 ### Main code ###
 init()
 with term.fullscreen():
@@ -292,5 +299,4 @@ with term.fullscreen():
         updatesc()
         kbread()
         if actions["player"] > 0:
-            for action in actions:
-                actions[action] -= 1
+            actions_update()

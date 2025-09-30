@@ -11,7 +11,8 @@
 		},
 		"player": {
 			"name": "player",
-			"icon": "[yellow]@",
+			"icon": "@",
+			"color": "yellow",
 			"ent": "human",
 			"coll": 1,
 			"priority": 999,
