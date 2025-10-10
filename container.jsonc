@@ -1,6 +1,5 @@
 {
-	"initialLevel": "l1",
-	"gflags": {},
+	"gflags": { "currentlevel": "l1" },
 	"levels": {
 		"l1": {
 			"flags": {
@@ -20,6 +19,8 @@
 				"player": { "bp": "player", "x": 0, "y": 0 },
 				"wall2": { "bp": "wall", "x": 2, "y": 2 },
 				"wall1": { "bp": "wall", "x": -2, "y": 0 },
+				"wall3": { "bp": "wall", "x": -3, "y": 0 },
+				"fwall": { "bp": "wall", "coll": 0, "x": 1, "y": -2 },
 				"fwall": { "bp": "wall", "coll": 0, "x": 1, "y": -2 },
 				"inviswall": { "bp": "wall", "icon": ".", "x": 0, "y": -2 }
 			},
@@ -28,7 +29,7 @@
 			},
 			"scripts": {
 				"script0": {
-					"code": "log_update('text from script')",
+					"code": "log_update(f's pressed {c} times')\nset_flag('test', 'activated')\nc+=1",
 					"autorun": true
 				}
 			},

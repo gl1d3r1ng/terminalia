@@ -2,7 +2,7 @@
 	"objects": {
 		"wall": {
 			"name": "wall",
-			"icon": "#",
+			"icon": "/",
 			"ent": "None",
 			"coll": 1,
 			"priority": 1,
@@ -11,7 +11,7 @@
 		},
 		"player": {
 			"name": "player",
-			"icon": "@",
+			"icon": "[",
 			"color": "yellow",
 			"ent": "human",
 			"coll": 1,

@@ -1,6 +1,6 @@
 ### v0.0.1.22
-Nothing changed, checkers will be replaced to scripts, scripts
-will use exec()
+Nothing changed, checkers will be replaced to scripts
+scripts will use exec()
 
 ### v0.0.1.21
 - basic ckecker

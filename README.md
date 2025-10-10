@@ -6,42 +6,44 @@ done:
 - [x] bluerints
 - [x] flags and gflags
 - [x] fps
-- [x] colors
-- [x] basic script
-- [x] log
+- [x] script
+- [x] pads
 
 0:
+- make core
 - rewrite grafic buffer
 - basic debug
 
 1:
-- [~] object system
+- [ ] object system
+- [ ] items
 - [ ] ui core (blessed lib)
-- [-] ?ui core (cursed)
 - [ ] cache
+- [ ] achievement
 - [ ] color switchers
-- [~] log
+- [ ] log
 - [ ] strings
+- [ ] fantom objects (technicaly, neither object or items, IOW, overlay: snow, darkness, rain, overlay text)
+- [ ] light
 
 2:
-- [ ] fantom objects (technicaly, neither object or items, IOW, overlay: snow, darkness, rain, overlay text)
 - [ ] ingame wiki (like in unciv?)
-- [ ] light
-- [ ] sight field
 - [ ] map constructor
+- [ ] melee battle
+- [ ] health system
+- [ ] entity system (ai)
 
 3:
 - [ ] rand level generator
-- [ ] entity system (ai)
-- [ ] health system
 - [ ] status system
-- [ ] melee battle
+- [ ] sight field
 
 4:
 - [ ] maps editor
 - [ ] range battle
 - [ ] error catching
 - [ ] docs :)
+- [-] ?ui core (cursed)
 
 99:
 - [ ] write on rust
